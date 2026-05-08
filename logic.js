@@ -1,6 +1,6 @@
-const myLibrary = [];
-
-start();
+let library = [];
+let libraryContainer;
+onStart();
 
 function Book(id, title, author) {
     this.id = id;
@@ -18,7 +18,7 @@ function Book(id, title, author) {
     };
 }
 
-function start() {
+function onStart() {
     addBookToLibrary(new Book(crypto.randomUUID(), "Animal Farm", "George Orwell"));
     addBookToLibrary(new Book(crypto.randomUUID(), "The Little Prince", "Antoine de Saint-Exupéry"));
     addBookToLibrary(new Book(crypto.randomUUID(), "Hunger Games", "Suzanne Collins"));
@@ -31,16 +31,16 @@ function start() {
     addBookToLibrary(new Book(crypto.randomUUID(), "Never Lie", "Freida McFadden"));
     addBookToLibrary(new Book(crypto.randomUUID(), "Dark Matter", "Blake Crouch"));
 
+    //Get the library container
+    libraryContainer = document.getElementById("library");
     displayLibrary();
 }
 
 function addBookToLibrary(bookToAdd) {
-    myLibrary.push(bookToAdd);
+    library.push(bookToAdd);
 }
 
 function displayLibrary() {
-    const libraryContainer = document.getElementById("library");
-
     //DEBUG
     // myLibrary.forEach((book) => {
     //     console.log(book.title);
@@ -49,17 +49,36 @@ function displayLibrary() {
     //Clear the library
     libraryContainer.innerHTML = "";
 
-    var i = 0;
     //Populate library
-    myLibrary.forEach((book) => {
-        libraryContainer.innerHTML += `
-        <div class="book">
+    library.forEach((book) => {
+        //Create the div
+        const bookDiv = document.createElement('div');
+        //Add the class
+        bookDiv.classList.add('book');
+        //Construct the div with all the elements needed
+        bookDiv.innerHTML = `
+            <md-outlined-icon-button class="button-delete">
+                <md-icon>delete</md-icon>
+            </md-outlined-icon-button>
             <div class="cover">
                 <span class="title">${book.GetName()}</span>
                 <span class="author">${book.GetAuthor()}</span>
-            </div>
-        </div>`;
+            </div>`;
 
-        i++;
+        const btnDelete = bookDiv.querySelector('.button-delete');
+        btnDelete.addEventListener('click', () => onRemoveClicked(book));
+
+        //Display the current book div
+        libraryContainer.appendChild(bookDiv);
     });
+
+}
+
+function onRemoveClicked(bookToRemove) 
+{
+    //Returns an array without the book in it.
+    library = library.filter(book => book.GetId() !== bookToRemove.GetId());
+
+    //Display the library without the new book
+    displayLibrary();
 }

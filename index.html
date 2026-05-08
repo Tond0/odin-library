@@ -4,14 +4,30 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <!-- Google M3 Icons -->
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&family=Material+Symbols+Outlined"
+        rel="stylesheet">
+        
+    <script type="importmap">
+        {
+          "imports": {
+            "@material/web/": "https://esm.run/@material/web/"
+          }
+        }
+    </script>
+    <script type="module"> import '@material/web/all.js';</script>
+
+
     <link rel="stylesheet" href="style.css">
     <script src="logic.js" defer></script>
     <title>Document</title>
 </head>
 
 <body>
-    <div id="library">
-    </div>
+
+    <!-- This will be filled of books by the js file -->
+    <div id="library"></div>
 </body>
 
 </html>
