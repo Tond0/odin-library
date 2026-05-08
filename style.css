@@ -1,0 +1,62 @@
+*{
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+
+    font-family: sans-serif, system-ui;
+}
+
+#library
+{
+    display: grid;
+    
+    grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+
+    width: 100%;
+    height: 100%;
+
+    gap: 12px;
+    padding: 20px;
+}
+
+.book
+{
+    display: flex;
+    flex-flow: column nowrap;
+
+    justify-content: space-between;
+    align-items: start;
+
+    padding: 20px;
+
+    /* Width is handled by the grid */
+    height: 500px;
+
+    background-color: cyan;
+}
+
+.book .cover
+{
+    display: flex;
+    flex-flow: column nowrap;
+
+    flex: 1;
+    width: 100%;
+
+    justify-content: center;
+    align-items: center;
+}
+
+.cover .title
+{
+    text-wrap: wrap;
+    text-align: center;
+    font-size: 32px;
+    font-weight: 500;
+}
+
+.card .author
+{
+    text-wrap: wrap;
+    font-size: 24px;
+}
