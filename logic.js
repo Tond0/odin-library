@@ -1,45 +1,58 @@
+/**
+ * Represents a book with private properties for ID, title, author, and completion status.
+ */
 class Book {
     #id;
     #title;
     #author;
     #completed;
 
+    /**
+     * Initializes a new book instance with a unique UUID.
+     */
     constructor(title, author, completed = false) {
         this.#id = crypto.randomUUID();
         this.#title = title;
         this.#author = author;
         this.#completed = completed;
     }
-
-    // I metodi definiti qui finiscono automaticamente sul "Prototype", 
-    // risparmiando memoria perché non vengono ricreati per ogni singolo libro
+    
+    // Getter methods for private properties
     GetId() { return this.#id; }
     GetName() { return this.#title; }
     GetAuthor() { return this.#author; }
     GetCompleted() { return this.#completed; }
 
+    /**
+     * Toggles the book's completion status.
+     */
     ToggleCompleted() { this.#completed = !this.#completed; }
 }
 
+// Global state: array to store book objects
 let library = [];
 
-//HTML Elements
-//Get library
+// DOM Element references
+// Main container for book display
 const libraryContainer = document.querySelector("#library");
 
-//Get the add book button
+// Button to trigger adding a book
 const addBookButton = document.querySelector("#addBookButton");
 
-//Form
+// Form and input fields for adding new books
 const inputForm = document.querySelector(".floatingForm");
 const inputBookTitle = document.querySelector("#bookTitle");
 const inputBookAuthor = document.querySelector("#bookAuthor");
 
 
+// Initialize the application
 onStart();
 
+/**
+ * Sets up initial data, event listeners, and initial render.
+ */
 function onStart() {
-    //Add the books
+    // Populate the library with default books
     addBookToLibrary(new Book("Animal Farm", "George Orwell", true));
     addBookToLibrary(new Book("The Little Prince", "Antoine de Saint-Exupéry", false));
     addBookToLibrary(new Book("Hunger Games", "Suzanne Collins", false));
@@ -52,102 +65,111 @@ function onStart() {
     addBookToLibrary(new Book("Never Lie", "Freida McFadden", true));
     addBookToLibrary(new Book("Dark Matter", "Blake Crouch", false));
 
-    //Bind to inputForm submit event
+    // Handle form submissions
     inputForm.addEventListener('submit', onFormSubmit);
 
-    //Bind the add new book button
+    // Reserved for manual button binding if needed
     // addBookButton.addEventListener('click', onAddClicked);
 
-    //Display the library
+    // Initial UI render
     refreshLibrary();
 }
 
-//Function is kinda useless right now, but might be a useful initialization container in the future
+/**
+ * Adds a book object to the array and prepends it to the DOM.
+ */
 function addBookToLibrary(bookToAdd) {
-    //Push in the array
+    // Update the data array
     library.push(bookToAdd);
 
-    //Create a div
+    // Generate the UI component
     const bookDiv = createBookDiv(bookToAdd);
 
-    //Add as child
+    // Insert at the top of the container
     libraryContainer.prepend(bookDiv);
 }
 
-//Factory pattern: Get a book div
+/**
+ * Creates a DOM element from a template based on book data.
+ */
 function createBookDiv(bookData) {
-    //Create the div
+    // Select the HTML template
     const bookTemplate = document.querySelector("#bookTemplate");
 
-    //Create a copy of the template
+    // Clone the template content
     const bookClone = bookTemplate.content.cloneNode(true);
 
-    //Get Elements
+    // Reference internal template elements
     const bookDiv = bookClone.querySelector('.book');
     const titleSpan = bookClone.querySelector('.title');
     const authorSpan = bookClone.querySelector('.author');
     const btnDelete = bookClone.querySelector('#buttonDelete');
     const btnCompleted = bookClone.querySelector('#buttonCompleted');
 
-    //Populate text
+    // Sync element text with object data
     titleSpan.textContent = bookData.GetName();
     authorSpan.textContent = bookData.GetAuthor();
     btnCompleted.textContent = bookData.GetCompleted() ? "Completed" : "Not Completed";
 
-    //Bind buttons event
+    // Attach event listeners for delete and toggle functionality
     btnDelete.addEventListener('click', () => onRemoveClicked(bookData, bookDiv));
     btnCompleted.addEventListener('click', () => onCompletedClicked(bookData, btnCompleted));
 
-    //Return the div
+    // Return the ready-to-use node
     return bookDiv;
 }
 
-//Force the refresh of the entire library.
+/**
+ * Clears the UI container and re-renders all books from the array.
+ */
 function refreshLibrary() {
-    //DEBUG
-    // myLibrary.forEach((book) => {
-    //     console.log(book.title);
-    // });
-
-    //Clear the library
+    // Clear existing DOM content
     libraryContainer.innerHTML = "";
 
-    //Populate library
+    // Iterate through the library array and append each book to the container
     library.forEach((book) => {
-        //Create the div
         const bookDiv = createBookDiv(book);
-
-        //Display the current book div
         libraryContainer.appendChild(bookDiv);
     });
 }
 
+/**
+ * Handles the creation of a new book via form submission.
+ */
 function onFormSubmit(e) {
-    //Do not reload the page
+    // Prevent the default browser reload
     e.preventDefault();
 
-    //Get data
+    // Extract values from input fields
     const title = inputBookTitle.value;
     const author = inputBookAuthor.value;
 
-    //Create book
+    // Instantiate new Book object
     const newBook = new Book(title, author, false);
 
-    //Add to the library
+    // Update data and UI, then reset the form
     addBookToLibrary(newBook);
     inputForm.reset();
 }
 
+/**
+ * Removes a book from both the data array and the DOM.
+ */
 function onRemoveClicked(bookData, bookDiv) {
-    //Returns an array without the book in it.
+    // Filter the global array to exclude the removed book
     library = library.filter(book => book.GetId() !== bookData.GetId());
 
-    //Display the library without the new book
+    // Update the UI by removing the specific node
     bookDiv.remove();
 }
 
+/**
+ * Toggles the completion status and updates the button label.
+ */
 function onCompletedClicked(bookData, bookBtnCompleted) {
+    // Update data model
     bookData.ToggleCompleted();
     
+    // Synchronize the button text with the new state
     bookBtnCompleted.textContent = bookData.GetCompleted() ? "Completed" : "Not Completed";
 }
